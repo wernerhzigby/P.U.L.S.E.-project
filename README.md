@@ -116,6 +116,12 @@ Open http://localhost:5000 to view the dashboard.
 
 ## Safety Notes
 
+### Detection Disclaimer
+
+All arrhythmia/anomaly flags are heuristic and **not** clinically validated. They are for educational use only and should not be used for diagnosis or medical decisions.
+
+---
+
 - This system is **not electrically isolated**
 - Do **not** connect to mains-powered equipment while attached to a person
 - **Educational and experimental use only**
@@ -160,6 +166,16 @@ You can tune sampling and safety settings without code changes:
 - `ECG_BRADY_BPM` (default: 50)
 - `ECG_TACHY_BPM` (default: 100)
 - `ECG_VTACH_BPM` (default: 150)
+- `ECG_BASELINE_WINDOW_SEC` (default: 1.0)
+- `ECG_NOISE_WINDOW_SEC` (default: 2.0)
+- `ECG_MIN_RR_SEC` (default: 0.25)
+- `ECG_PREMATURE_SHORT` (default: 0.8)
+- `ECG_PREMATURE_LONG` (default: 1.2)
+- `ECG_LOW_AMP_THRESHOLD` (default: 800)
+- `ECG_NOISE_DERIV_THRESHOLD` (default: 1200)
+- `ECG_BASELINE_WANDER_THRESHOLD` (default: 1500)
+- `ECG_CLIP_LOW` (default: 0)
+- `ECG_CLIP_HIGH` (default: 32767)
 - `ECG_AUTOSTART` (default: 1)
 - `ECG_SHUTDOWN_TOKEN` (default: unset; required to enable /shutdown)
 

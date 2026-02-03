@@ -34,3 +34,24 @@ def test_repolarization_detection():
     state.current_bpm = 80
     state.detect_events(value=int(state.config.r_threshold * 1.3), now=time.time())
     assert "Early Repolarization / ST Elevation (possible)" in state.event_state
+
+
+def test_low_signal_amplitude():
+    state = make_state()
+    t0 = time.time()
+    for i in range(state.config.noise_window_len):
+        state.add_sample(10000, t0 + i / state.config.sample_rate)
+    assert "Low Signal Amplitude" in state.event_state
+
+
+def test_pvc_possible():
+    state = make_state()
+    t0 = time.time()
+    # Create a short-long RR pattern
+    rr_intervals = [0.8, 0.8, 0.5, 1.1, 0.8, 0.8]
+    t = t0
+    for rr in rr_intervals:
+        t += rr
+        state.last_peak_time = t - rr
+        state.add_sample(state.config.r_threshold + 5000, t)
+    assert "Premature Ventricular Contraction (PVC) (possible)" in state.event_state

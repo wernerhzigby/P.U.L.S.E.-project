@@ -18,7 +18,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 
-from ecg_core import ECGConfig, ECGState, CARDIAC_EVENTS
+from ecg_core import ECGConfig, ECGState, CARDIAC_EVENTS, SIGNAL_EVENTS
 
 try:
     import board
@@ -133,6 +133,7 @@ def data():
             "bpm": state.current_bpm,
             "bpm_history": list(state.bpm_history)[-300:],
             "events": list(state.event_state.keys()),
+            "signal": {"filtered": list(state.filtered_data)[-1000:]},
         })
 
 
@@ -212,7 +213,7 @@ def report():
         sorted_events = sorted(event_counts.items(), key=lambda x: x[1], reverse=True)
 
         for event_name, count in sorted_events:
-            if event_name in CARDIAC_EVENTS:
+            if event_name in CARDIAC_EVENTS or event_name in SIGNAL_EVENTS:
                 pct = (count / total) * 100
                 if pct > 0:
                     concern = "Normal"
