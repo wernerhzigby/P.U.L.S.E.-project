@@ -42,8 +42,7 @@ All hardware component datasheets used in **P.U.L.S.E.** are stored in the **`da
 Click any document below to view the original manufacturer specifications:
 
 - [AD8232 Heart Rate Monitor v1.0](datasheets/AD8232_Heart_Rate_Monitor_v10.pdf)  
-- [TP4056 Lithium Battery Charger Module](datasheets/TP4056-XUNDE.pdf)  
-- [XL6009 DC-DC Converter](datasheets/XL6009-DC-DC-Converter-Datasheet.pdf)  
+- [adafruit powerboost 1000](datasheets/adafruit-powerboost-1000-basic.pdf)   
 - [AD8232 ECG Analog Front-End](datasheets/ad8232.pdf)
 
 ### Why these datasheets matter
