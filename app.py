@@ -36,10 +36,10 @@ SAMPLE_WINDOW = 5
 RESET_LOCK = threading.Lock()
 REPORT_CACHE = {"timestamp": 0.0, "signature": None, "payload": None, "public_until": 0.0}
 
-# Mailgun configuration (set via environment variables)
-MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY", "YOUR_MAILGUN_API_KEY")
-MAILGUN_DOMAIN = os.getenv("MAILGUN_DOMAIN", "YOUR_MAILGUN_DOMAIN")
-MAILGUN_FROM = os.getenv("MAILGUN_FROM", "ECG Monitor <postmaster@YOUR_MAILGUN_DOMAIN>")
+# Mailgun configuration (set directly here)
+MAILGUN_API_KEY = "YOUR_MAILGUN_API_KEY"
+MAILGUN_DOMAIN = "YOUR_MAILGUN_DOMAIN"
+MAILGUN_FROM = "ECG Monitor <postmaster@YOUR_MAILGUN_DOMAIN>"
 
 app = Flask(__name__)
 

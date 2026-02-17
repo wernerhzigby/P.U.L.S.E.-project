@@ -164,9 +164,9 @@ https://lastminuteengineers.com/wp-content/uploads/arduino/AD8232-Module-ECG-Ele
 
 ## Installation
 
-### Environment Variables
+### Configuration
 
-You can tune sampling and safety settings without code changes:
+You can tune sampling and safety settings without code changes via environment variables:
 
 - `ECG_SAMPLE_RATE` (default: 250)
 - `ECG_R_THRESHOLD` (default: 15000)
@@ -188,9 +188,10 @@ You can tune sampling and safety settings without code changes:
 - `ECG_CLIP_HIGH` (default: 32767)
 - `ECG_AUTOSTART` (default: 1)
 - `ECG_SHUTDOWN_TOKEN` (default: unset; required to enable /shutdown)
-- `MAILGUN_API_KEY` (default: example key in app.py)
-- `MAILGUN_DOMAIN` (default: example sandbox domain in app.py)
-- `MAILGUN_FROM` (default: `ECG Monitor <postmaster@MAILGUN_DOMAIN>`)
+Mailgun email sending is configured directly in `app.py`:
+- `MAILGUN_API_KEY`
+- `MAILGUN_DOMAIN`
+- `MAILGUN_FROM`
 
 ---
 
