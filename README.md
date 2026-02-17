@@ -15,16 +15,10 @@ The project captures real-time cardiac electrical signals using an analog ECG se
 
 The system can also generate PDF reports highlighting detected events in the ECG signal.
 
-**Screenshots (add your images here):**
 - Desktop dashboard: `docs/images/desktop-dashboard.png`
 - Mobile dashboard: `docs/images/mobile-dashboard.png`
 - Report PDF sample: `docs/images/report-sample.png`
 - Hardware build: `docs/images/hardware-setup.png`
-
-Example Markdown:
-```markdown
-![Desktop Dashboard](docs/images/desktop-dashboard.png)
-```
 
 **Features:**
 - Real-time ECG signal acquisition
