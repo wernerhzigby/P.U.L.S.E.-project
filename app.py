@@ -36,6 +36,11 @@ SAMPLE_WINDOW = 5
 RESET_LOCK = threading.Lock()
 REPORT_CACHE = {"timestamp": 0.0, "signature": None, "payload": None, "public_until": 0.0}
 
+# Mailgun configuration (set via environment variables)
+MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY", "YOUR_MAILGUN_API_KEY")
+MAILGUN_DOMAIN = os.getenv("MAILGUN_DOMAIN", "YOUR_MAILGUN_DOMAIN")
+MAILGUN_FROM = os.getenv("MAILGUN_FROM", "ECG Monitor <postmaster@YOUR_MAILGUN_DOMAIN>")
+
 app = Flask(__name__)
 
 config = ECGConfig()
@@ -791,13 +796,10 @@ def send_report_email():
     if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
         return jsonify({"ok": False, "error": "Invalid email address."}), 400
 
-    api_key = os.getenv("MAILGUN_API_KEY", "YOUR_MAILGUN_API_KEY")
-    domain = os.getenv("MAILGUN_DOMAIN", "sandbox6e9d3d770b574644bbf114b21d225dbd.mailgun.org")
-    from_addr = os.getenv(
-        "MAILGUN_FROM",
-        f"ECG Monitor <postmaster@{domain}>" if domain else "postmaster@sandbox6e9d3d770b574644bbf114b21d225dbd.mailgun.org",
-    )
-    if not api_key or not domain or not from_addr:
+    api_key = MAILGUN_API_KEY
+    domain = MAILGUN_DOMAIN
+    from_addr = MAILGUN_FROM if MAILGUN_FROM else (f"ECG Monitor <postmaster@{domain}>" if domain else None)
+    if not api_key or api_key == "YOUR_MAILGUN_API_KEY" or not domain or domain == "YOUR_MAILGUN_DOMAIN":
         return jsonify({"ok": False, "error": "Mailgun is not configured."}), 500
 
     report_bytes = build_report_pdf()
