@@ -15,6 +15,17 @@ The project captures real-time cardiac electrical signals using an analog ECG se
 
 The system can also generate PDF reports highlighting detected events in the ECG signal.
 
+**Screenshots (add your images here):**
+- Desktop dashboard: `docs/images/desktop-dashboard.png`
+- Mobile dashboard: `docs/images/mobile-dashboard.png`
+- Report PDF sample: `docs/images/report-sample.png`
+- Hardware build: `docs/images/hardware-setup.png`
+
+Example Markdown:
+```markdown
+![Desktop Dashboard](docs/images/desktop-dashboard.png)
+```
+
 **Features:**
 - Real-time ECG signal acquisition
 - High-resolution 16-bit ADC sampling (ADS1115)
@@ -261,6 +272,26 @@ The downloaded ZIP includes:
 - `/report/latest` — download the most recent report bundle (5-minute cache window)
 - `/snapshot` — download the last 30 seconds of ECG as PNG
 - `/send_report_email` — POST JSON `{ "email": "doctor@example.com" }` to send the latest report bundle
+
+---
+
+## Project Structure
+
+Key folders and files:
+- `app.py` — Flask app, API routes, report generation, email sending
+- `ecg_core.py` — signal processing, event detection logic, thresholds
+- `templates/` — HTML templates (desktop + mobile)
+- `static/` — CSS assets
+- `datasheets/` — hardware reference PDFs
+- `assembly/` — wiring diagrams and build images
+
+---
+
+## UI Overview
+
+- Desktop dashboard: full-width ECG, active events, signal quality, and session summary
+- Mobile dashboard: optimized layout with sticky action bar and touch-friendly controls
+- Buttons: Download Report (blue), Snapshot (purple), Share Latest (green), Send to Doctor (pink), Reset (yellow), Shutdown (red)
 
 ---
 
