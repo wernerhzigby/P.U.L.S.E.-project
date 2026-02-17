@@ -21,6 +21,10 @@ The system can also generate PDF reports highlighting detected events in the ECG
 - Flask web interface for live visualization
 - ECG graph plotting using Matplotlib
 - PDF report generation using ReportLab
+- Report bundle ZIP with CSVs, PDF, and JSON summary
+- One-tap 30-second ECG snapshot download
+- Mobile-optimized dashboard (`/mobile`)
+- Email report delivery via Mailgun
 - Designed for Raspberry Pi Zero platforms
 
 ---
@@ -32,6 +36,7 @@ The system can also generate PDF reports highlighting detected events in the ECG
 - [Matplotlib](https://matplotlib.org/)
 - [ReportLab](https://www.reportlab.com/docs/reportlab-userguide.pdf)
 - [Adafruit CircuitPython ADS1x15](https://github.com/adafruit/Adafruit_CircuitPython_ADS1x15)
+- [Mailgun](https://www.mailgun.com/)
 
 ---
 
@@ -79,6 +84,7 @@ ECG_SIMULATE=1 python app.py
 ```
 
 Open http://localhost:5000 to view the dashboard.
+Open http://localhost:5000/mobile for the mobile-optimized view.
 
 ---
 
@@ -177,6 +183,9 @@ You can tune sampling and safety settings without code changes:
 - `ECG_CLIP_HIGH` (default: 32767)
 - `ECG_AUTOSTART` (default: 1)
 - `ECG_SHUTDOWN_TOKEN` (default: unset; required to enable /shutdown)
+- `MAILGUN_API_KEY` (default: example key in app.py)
+- `MAILGUN_DOMAIN` (default: example sandbox domain in app.py)
+- `MAILGUN_FROM` (default: `ECG Monitor <postmaster@MAILGUN_DOMAIN>`)
 
 ---
 
@@ -233,6 +242,25 @@ You can tune sampling and safety settings without code changes:
     ```
 
 3. View live ECG signals and generate PDF reports.
+4. Download a 30-second snapshot from the dashboard.
+5. Send the report bundle to a doctor using the in-app modal (Mailgun required).
+
+### Report Bundle Contents
+
+The downloaded ZIP includes:
+- `report.pdf` summary
+- `report.json` (machine-readable stats and explanations)
+- `ecg_data_with_flags.csv`
+- `bpm_data.csv`
+- `ecg_snapshot.png`
+- `bpm_snapshot.png`
+
+### Report & Snapshot Endpoints
+
+- `/report` — generate and download the report bundle
+- `/report/latest` — download the most recent report bundle (5-minute cache window)
+- `/snapshot` — download the last 30 seconds of ECG as PNG
+- `/send_report_email` — POST JSON `{ "email": "doctor@example.com" }` to send the latest report bundle
 
 ---
 
@@ -242,7 +270,7 @@ You can tune sampling and safety settings without code changes:
 - [x] Web-based visualization
 - [x] PDF report generation
 - [x] Automatic event flagging
-- [ ] Mobile-optimized interface
+- [x] Mobile-optimized interface
 
 ---
 

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P.U.L.S.E. ECG Monitor (Mobile)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/mobile.css">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+<header class="mobile-top">
+    <div>
+        <h1>P.U.L.S.E. ECG</h1>
+        <span>Live ECG Monitoring</span>
+    </div>
+    <a class="pill primary" href="/report">Download</a>
+</header>
+
+<main>
+    <section class="status-row">
+        <div class="status-chip" id="signal-summary">Signal: --</div>
+    </section>
+    <section class="hero">
+        <div class="hero-card">
+            <div class="label">Heart Rate</div>
+            <div class="value" id="bpm">--</div>
+            <div class="sub" id="bpm-note">Waiting for signal</div>
+        </div>
+        <div class="hero-card">
+            <div class="label">Signal Quality</div>
+            <div class="value" id="signal-quality">--</div>
+            <div class="sub" id="signal-detail">Awaiting data</div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-head">
+            <h2>Live ECG Signal</h2>
+            <span class="chip">Streaming</span>
+        </div>
+        <div class="chart-wrap">
+            <div id="ecgChart" class="chart" style="height: 320px;"></div>
+            <div class="chart-overlay" id="ecgOverlay">Waiting for signal…</div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-head">
+            <h2>Heart Rate Trend</h2>
+        </div>
+        <div id="bpmChart" class="chart" style="height: 200px;"></div>
+    </section>
+
+    <section class="card">
+        <div class="card-head">
+            <h2>Session Summary</h2>
+        </div>
+        <div class="summary-grid">
+            <div><span>Avg BPM</span><strong id="summary-avg">--</strong></div>
+            <div><span>Min / Max</span><strong id="summary-range">--</strong></div>
+            <div><span>Duration</span><strong id="summary-duration">--</strong></div>
+            <div><span>Alerts</span><strong id="summary-alerts">--</strong></div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-head">
+            <h2>Active Events</h2>
+            <span class="event-pill" id="event-count">0 Alerts</span>
+        </div>
+        <div id="events" class="event-list"></div>
+    </section>
+</main>
+
+<div class="action-bar">
+    <a class="action-btn snapshot" href="/snapshot">Save 30s PNG</a>
+    <button class="action-btn secondary" onclick="fetch('/reset',{method:'POST'})">Reset</button>
+    <a class="action-btn share" href="/report/latest">Share Report</a>
+</div>
+
+<script>
+let ecgTrace = {
+    y: [],
+    type: 'scatter',
+    mode: 'lines',
+    line: {color: '#4cb3ff', width: 1}
+};
+
+let bpmTrace = {
+    y: [],
+    type: 'scatter',
+    mode: 'lines',
+    line: {color: '#ff6b6b', width: 2}
+};
+
+Plotly.newPlot('ecgChart', [ecgTrace], {
+    margin: {t: 20, b: 30, r: 10, l: 40},
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    xaxis: {showgrid: false, zeroline: false, showticklabels: false},
+    yaxis: {showgrid: false, zeroline: false}
+});
+
+Plotly.newPlot('bpmChart', [bpmTrace], {
+    margin: {t: 20, b: 30, r: 10, l: 40},
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    xaxis: {showgrid: false, zeroline: false, showticklabels: false},
+    yaxis: {showgrid: false, zeroline: false}
+});
+
+function updateStatus() {
+    fetch('/health').then(r => r.json()).then(d => {
+        if (d.signal_quality) {
+            const summary = d.signal_quality.level || '--';
+            document.getElementById('signal-summary').innerText = `Signal: ${summary}`;
+        }
+        if (d.signal_quality) {
+            document.getElementById('signal-quality').innerText = d.signal_quality.level || '--';
+            const details = [];
+            if (d.signal_quality.low_amplitude) details.push('Low amplitude');
+            if (d.signal_quality.noise) details.push('Noise');
+            if (d.signal_quality.baseline_wander) details.push('Wander');
+            if (d.signal_quality.clipping) details.push('Clipping');
+            document.getElementById('signal-detail').innerText = details.length ? details.join(' • ') : 'Stable signal';
+        }
+
+        if (d.summary) {
+            document.getElementById('summary-avg').innerText = d.summary.bpm_avg ?? '--';
+            if (d.summary.bpm_min !== null && d.summary.bpm_max !== null) {
+                document.getElementById('summary-range').innerText = `${d.summary.bpm_min} / ${d.summary.bpm_max}`;
+            } else {
+                document.getElementById('summary-range').innerText = '--';
+            }
+            document.getElementById('summary-duration').innerText = d.summary.duration_sec ? `${d.summary.duration_sec}s` : '--';
+            document.getElementById('summary-alerts').innerText = d.summary.active_events ?? '--';
+            document.getElementById('event-count').innerText = `${d.summary.active_events ?? 0} Alerts`;
+        }
+    });
+}
+
+function update() {
+    fetch('/data').then(r => r.json()).then(d => {
+        document.getElementById('bpm').innerText = d.bpm || '--';
+        document.getElementById('bpm-note').innerText = d.bpm ? 'Live estimate' : 'Waiting for signal';
+
+        Plotly.update('ecgChart', {y: [d.ecg]}, {}, [0]);
+        Plotly.update('bpmChart', {y: [d.bpm_history]}, {}, [0]);
+
+        const overlay = document.getElementById('ecgOverlay');
+        if (d.ecg && d.ecg.length > 10) {
+            overlay.classList.add('hidden');
+        } else {
+            overlay.classList.remove('hidden');
+        }
+
+        const ev = document.getElementById('events');
+        ev.innerHTML = '';
+        if (!d.events.length) {
+            const div = document.createElement('div');
+            div.className = 'event';
+            div.innerText = 'No active events.';
+            ev.appendChild(div);
+            return;
+        }
+
+        d.events.forEach(e => {
+            const div = document.createElement('div');
+            div.className = 'event';
+            if (e.includes('Ventricular') || e.includes('Asystole')) {
+                div.classList.add('danger');
+            } else if (e.includes('Tachycardia') || e.includes('Bradycardia')) {
+                div.classList.add('warn');
+            }
+            div.innerText = e;
+            ev.appendChild(div);
+        });
+    });
+}
+
+updateStatus();
+setInterval(update, 250);
+setInterval(updateStatus, 2500);
+</script>
+</body>
+</html>

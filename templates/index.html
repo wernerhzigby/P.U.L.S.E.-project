@@ -6,57 +6,114 @@
 <title>P.U.L.S.E. ECG Monitor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css">
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body>
-<header>
-    <div class="brand">
-        <h1>P.U.L.S.E.</h1>
-        <span>Portable Unit for Live Signal Electrocardiography</span>
-    </div>
-    <div class="actions">
-        <a class="button-link" href="/report">Download Report</a>
-        <button class="secondary" onclick="fetch('/reset',{method:'POST'})">Reset</button>
-        <button class="danger" onclick="fetch('/shutdown',{method:'POST'})">Shutdown</button>
-    </div>
-</header>
-
-<main>
-    <div class="dashboard">
-        <section class="card">
-            <div class="metrics">
-                <div class="metric">
-                    <div class="label">BPM</div>
-                    <div class="value" id="bpm">--</div>
-                    <div class="sub" id="bpm-note">Waiting for signal</div>
-                </div>
-                <div class="metric">
-                    <div class="label">Mode</div>
-                    <div class="value" id="mode">--</div>
-                    <div class="sub" id="hardware">Hardware: --</div>
-                </div>
-                <div class="metric">
-                    <div class="label">Status</div>
-                    <div class="value">
-                        <span class="status-pill"><span class="status-dot"></span><span id="status">Live</span></span>
-                    </div>
-                    <div class="sub" id="last-update">Last update: --</div>
-                </div>
+<div class="app-shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo-badge">P</div>
+            <div class="brand-copy">
+                <h1>P.U.L.S.E. ECG Monitor</h1>
+                <span>Portable Unit for Live Signal Electrocardiography</span>
             </div>
+        </div>
+        <div class="actions">
+            <a class="button-link primary" href="/report">Download Report</a>
+            <a class="button-link snapshot" href="/snapshot">Save 30s Snapshot</a>
+            <a class="button-link share" href="/report/latest">Share Latest Report</a>
+            <button class="button-link doctor" id="doctorButton">Send to Doctor</button>
+            <button class="secondary" onclick="fetch('/reset',{method:'POST'})">Reset</button>
+            <button class="danger" onclick="fetch('/shutdown',{method:'POST'})">Shutdown</button>
+        </div>
+    </header>
 
-            <div id="ecgChart" style="height: 360px;"></div>
-            <div id="bpmChart" style="height: 170px; margin-top: 12px;"></div>
+    <main>
+        <section class="overview">
+            <div class="metric-card">
+                <div class="label">Heart Rate</div>
+                <div class="value" id="bpm">--</div>
+                <div class="sub" id="bpm-note">Waiting for signal</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Mode</div>
+                <div class="value" id="mode">--</div>
+                <div class="sub" id="hardware">Hardware: --</div>
+            </div>
+            <div class="metric-card status-card">
+                <div class="label">Status</div>
+                <div class="value">
+                    <span class="status-pill"><span class="status-dot"></span><span id="status">Live</span></span>
+                </div>
+                <div class="sub" id="last-update">Last update: --</div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Signal Quality</div>
+                <div class="value" id="signal-quality">--</div>
+                <div class="sub" id="signal-detail">Awaiting data</div>
+            </div>
         </section>
 
-        <aside class="card">
-            <h2>Active Events</h2>
-            <div id="events" class="event-list"></div>
-        </aside>
+        <div class="dashboard">
+            <section class="card chart-card">
+                <div class="card-head">
+                    <div>
+                        <h2>Live ECG Signal</h2>
+                        <p>Real-time waveform from the sensor input.</p>
+                    </div>
+                    <div class="chip">Streaming</div>
+                </div>
+                <div class="chart-wrap">
+                    <div id="ecgChart" class="chart" style="height: 420px;"></div>
+                    <div class="chart-overlay" id="ecgOverlay">Waiting for signal…</div>
+                </div>
+            </section>
+
+            <aside class="card side-panel">
+                <div class="card-head">
+                    <h2>Active Events</h2>
+                    <p>Monitoring alerts and live signal markers.</p>
+                </div>
+                <div class="summary-panel">
+                    <div class="summary-row"><span>Avg BPM</span><strong id="summary-avg">--</strong></div>
+                    <div class="summary-row"><span>Min / Max</span><strong id="summary-range">--</strong></div>
+                    <div class="summary-row"><span>Duration</span><strong id="summary-duration">--</strong></div>
+                    <div class="summary-row"><span>Active Alerts</span><strong id="summary-alerts">--</strong></div>
+                </div>
+                <div id="events" class="event-list"></div>
+            </aside>
+        </div>
+
+        <section class="card trend-card">
+            <div class="card-head">
+                <div>
+                    <h2>Heart Rate Trend</h2>
+                    <p>Rolling BPM history for the current session.</p>
+                </div>
+            </div>
+            <div id="bpmChart" class="chart" style="height: 220px;"></div>
+        </section>
+    </main>
+</div>
+
+<div class="modal" id="doctorModal">
+    <div class="modal-card">
+        <div class="modal-head">
+            <h3>Send Report to Doctor</h3>
+            <button class="modal-close" id="doctorClose">×</button>
+        </div>
+        <p>Enter your doctor's email and we'll send the latest report bundle.</p>
+        <input type="email" id="doctorEmail" placeholder="doctor@example.com">
+        <div class="modal-actions">
+            <button class="button-link doctor" id="doctorSend">Send</button>
+            <button class="button-link ghost" id="doctorCancel">Cancel</button>
+        </div>
+        <div class="modal-status" id="doctorStatus"></div>
     </div>
-</main>
+</div>
 
 <script>
 let ecgTrace = {
@@ -93,8 +150,32 @@ function updateStatus() {
     fetch('/health').then(r => r.json()).then(d => {
         document.getElementById('mode').innerText = d.simulate ? 'Simulated' : 'Live';
         document.getElementById('hardware').innerText = d.hardware ? 'Hardware: Ready' : 'Hardware: Missing';
+        document.getElementById('status').innerText = 'Live';
+        document.body.classList.remove('status-offline');
+
+        if (d.signal_quality) {
+            document.getElementById('signal-quality').innerText = d.signal_quality.level || '--';
+            const details = [];
+            if (d.signal_quality.low_amplitude) details.push('Low amplitude');
+            if (d.signal_quality.noise) details.push('Noise');
+            if (d.signal_quality.baseline_wander) details.push('Wander');
+            if (d.signal_quality.clipping) details.push('Clipping');
+            document.getElementById('signal-detail').innerText = details.length ? details.join(' • ') : 'Stable signal';
+        }
+
+        if (d.summary) {
+            document.getElementById('summary-avg').innerText = d.summary.bpm_avg ?? '--';
+            if (d.summary.bpm_min !== null && d.summary.bpm_max !== null) {
+                document.getElementById('summary-range').innerText = `${d.summary.bpm_min} / ${d.summary.bpm_max}`;
+            } else {
+                document.getElementById('summary-range').innerText = '--';
+            }
+            document.getElementById('summary-duration').innerText = d.summary.duration_sec ? `${d.summary.duration_sec}s` : '--';
+            document.getElementById('summary-alerts').innerText = d.summary.active_events ?? '--';
+        }
     }).catch(() => {
         document.getElementById('status').innerText = 'Offline';
+        document.body.classList.add('status-offline');
     });
 }
 
@@ -106,6 +187,13 @@ function update() {
 
         Plotly.update('ecgChart', {y: [d.ecg]}, {}, [0]);
         Plotly.update('bpmChart', {y: [d.bpm_history]}, {}, [0]);
+
+        const overlay = document.getElementById('ecgOverlay');
+        if (d.ecg && d.ecg.length > 10) {
+            overlay.classList.add('hidden');
+        } else {
+            overlay.classList.remove('hidden');
+        }
 
         const ev = document.getElementById('events');
         ev.innerHTML = '';
@@ -132,8 +220,58 @@ function update() {
 }
 
 updateStatus();
-setInterval(update, 500);
-setInterval(updateStatus, 5000);
+setInterval(update, 250);
+setInterval(updateStatus, 2500);
+
+const doctorButton = document.getElementById('doctorButton');
+const doctorModal = document.getElementById('doctorModal');
+const doctorClose = document.getElementById('doctorClose');
+const doctorCancel = document.getElementById('doctorCancel');
+const doctorSend = document.getElementById('doctorSend');
+const doctorEmail = document.getElementById('doctorEmail');
+const doctorStatus = document.getElementById('doctorStatus');
+
+function closeDoctorModal() {
+    doctorModal.classList.remove('open');
+    doctorStatus.innerText = '';
+    doctorEmail.value = '';
+}
+
+doctorButton.addEventListener('click', () => {
+    doctorModal.classList.add('open');
+    doctorEmail.focus();
+});
+
+doctorClose.addEventListener('click', closeDoctorModal);
+doctorCancel.addEventListener('click', closeDoctorModal);
+doctorModal.addEventListener('click', (e) => {
+    if (e.target === doctorModal) closeDoctorModal();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDoctorModal();
+});
+
+doctorSend.addEventListener('click', () => {
+    const email = doctorEmail.value.trim();
+    if (!email) {
+        doctorStatus.innerText = 'Please enter an email.';
+        return;
+    }
+    doctorStatus.innerText = 'Sending...';
+    fetch('/send_report_email', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email})
+    }).then(r => r.json()).then(d => {
+        if (d.ok) {
+            doctorStatus.innerText = 'Sent successfully.';
+        } else {
+            doctorStatus.innerText = d.error || 'Failed to send.';
+        }
+    }).catch(() => {
+        doctorStatus.innerText = 'Failed to send.';
+    });
+});
 </script>
 
 </body>

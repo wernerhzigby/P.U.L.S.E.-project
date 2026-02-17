@@ -5,3 +5,4 @@ adafruit-blinka
 adafruit-circuitpython-ads1x15
 Pillow
 pytest
+requests
