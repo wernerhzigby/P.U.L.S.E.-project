@@ -84,6 +84,20 @@ body {
     align-items: center;
 }
 
+.actions .button-link,
+.actions button {
+    width: 160px;
+    height: 46px;
+    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Sora", "Segoe UI", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
 button,
 .button-link {
     padding: 10px 16px;
