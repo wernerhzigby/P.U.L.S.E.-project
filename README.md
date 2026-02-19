@@ -71,20 +71,15 @@ Click any document below to view the original manufacturer specifications:
 - Configure **gain, sampling rate, and power management**
 - Prevent hardware damage during modifications
 
-> 📁 Directory:
-> ```
-> datasheets/
-> ```
-
 ---
 
 ## Getting Started
 
-Follow these instructions to set up **P.U.L.S.E.** on a Raspberry Pi Zero and run the system locally.
+Follow these instructions to set up **P.U.L.S.E.** on a Raspberry Pi Zero 2 W and run the system locally.
 
 ### Prerequisites
 
-- Raspberry Pi Zero (W or WH recommended)
+- Raspberry Pi Zero 2 WH
 - Analog ECG sensor (AD8232-based or equivalent)
 - ADS1115 16-bit ADC module
 - Python 3.11 or higher
@@ -300,15 +295,6 @@ Key folders and files:
 
 ---
 
-## Roadmap
-
-- [x] Live ECG acquisition
-- [x] Web-based visualization
-- [x] PDF report generation
-- [x] Automatic event flagging
-- [x] Mobile-optimized interface
-
----
 
 ## Contributing
 
@@ -339,20 +325,6 @@ https://github.com/wernerhzigby/electrocardiograma
 
 ---
 
-<!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/wernerhzigby/electrocardiograma.svg?style=for-the-badge
-[contributors-url]: https://github.com/wernerhzigby/electrocardiograma/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/wernerhzigby/electrocardiograma.svg?style=for-the-badge
-[forks-url]: https://github.com/wernerhzigby/electrocardiograma/network/members
-[stars-shield]: https://img.shields.io/github/stars/wernerhzigby/electrocardiograma.svg?style=for-the-badge
-[stars-url]: https://github.com/wernerhzigby/electrocardiograma/stargazers
-[issues-shield]: https://img.shields.io/github/issues/wernerhzigby/electrocardiograma.svg?style=for-the-badge
-[issues-url]: https://github.com/wernerhzigby/electrocardiograma/issues
-[license-shield]: https://img.shields.io/github/license/wernerhzigby/electrocardiograma.svg?style=for-the-badge
-[license-url]: https://github.com/wernerhzigby/electrocardiograma/blob/main/LICENSE.txt
-
----
-
 ## Development
 
 Run tests:
@@ -364,3 +336,17 @@ pytest
 Health endpoint:
 
 - `GET /health` returns simulation and hardware status.
+
+---
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/wernerhzigby/electrocardiograma.svg?style=for-the-badge
+[contributors-url]: https://github.com/wernerhzigby/electrocardiograma/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/wernerhzigby/electrocardiograma.svg?style=for-the-badge
+[forks-url]: https://github.com/wernerhzigby/electrocardiograma/network/members
+[stars-shield]: https://img.shields.io/github/stars/wernerhzigby/electrocardiograma.svg?style=for-the-badge
+[stars-url]: https://github.com/wernerhzigby/electrocardiograma/stargazers
+[issues-shield]: https://img.shields.io/github/issues/wernerhzigby/electrocardiograma.svg?style=for-the-badge
+[issues-url]: https://github.com/wernerhzigby/electrocardiograma/issues
+[license-shield]: https://img.shields.io/github/license/wernerhzigby/electrocardiograma.svg?style=for-the-badge
+[license-url]: https://github.com/wernerhzigby/electrocardiograma/blob/main/LICENSE.txt
